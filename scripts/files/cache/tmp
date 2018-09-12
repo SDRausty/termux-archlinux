@@ -1,0 +1,41 @@
+#!/bin/env bash
+IFS=$'\n\t'
+set -Eeuo pipefail
+shopt -s nullglob globstar
+_setget() { 
+ 	_LANG="$(getprop ${_LANGIN[i]})"
+	_LANGU="${_LANG:2:1}"
+}
+
+_setlanguage() { 
+ 	_LANGIN[0]="gsm.sim.operator.iso-country"
+	_LANGIN[1]="persist.sys.language"
+	_LANGIN[2]="persist.sys.locale"
+	_LANGIN[3]="ro.build.target_country"
+ 	_LANGIN[4]="ro.product.locale"
+	_LANGIN[5]="ro.product.locale.language"
+	_LANGIN[6]="ro.product.locale.region"
+	_LANGIN[7]="user.language"
+	_LANGIN[8]="user.region"
+	for i in "${!_LANGIN[@]}"; do
+	 	_LANGU="$(getprop ${_LANGIN[i]})"
+		printf "\\n%s" "${_LANGIN[i]}"
+		printf "\\n%s" "$_LANGU"
+		if [[ "$_LANGU" = *-* ]];then
+			echo have match 
+			_LANGUAGE="$_LANGU"
+			echo _LANGU
+			echo $_LANGU
+			echo _LANGUAGE
+			echo $_LANGUAGE
+		fi
+	done
+# 	_LANGUAGE="${_LANG//-/_}"
+	printf "\\n%s" "$_LANGUAGE"
+  	if [[ "$_LANGUAGE" != *-* ]];then
+  		_LANGUAGE="$(en-US)"
+  	fi
+}
+_setlanguage
+printf "\\n%s" "$_LANGUAGE"
+

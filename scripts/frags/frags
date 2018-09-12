@@ -1,0 +1,63 @@
+#!/bin/env bash
+set -Eeuo pipefail
+shopt -s nullglob globstar
+unset LD_PRELOAD
+## Declare getprops
+getpropcommandsa=("getprop gsm.sim.operator.iso-country" "getprop net.bt.name" "getprop persist.sys.locale" "getprop ro.build.target_country" "getprop ro.build.version.release" "getprop ro.build.version.sdk" "getprop ro.product.device" "getprop ro.product.first_api_level" "getprop ro.product.locale" "getprop ro.product.manufacturer" "getprop ro.product.model")
+for i in "${!getpropcommandsa[@]}"; do
+	getpropcommandst+="\\e[1;32m[${getpropcommandsa[$i]}]: [`${getpropcommandsa[$i]}`]\\e[0;32m\\n"
+done
+printf  "$getpropcommandst"
+#	## Used to generate signals.
+#  	((1/0)) # 1
+# 	echo hello | grep "asdf" # 1
+# 	format c: #127
+#  	. foo
+#  	. 35e493e
+# 	 (false; echo one) | cat; echo two # 1 & 201
+# 	cat
+##
+#		apt update && apt -o APT::Keep-Downloaded-Packages="true" upgrade -y
+#		apt -o APT::Keep-Downloaded-Packages="true" install "$aptin" -y
+echo user.language
+getprop user.language
+echo user.region
+getprop user.region
+echo persist.sys.locale
+getprop persist.sys.locale
+echo persist.sys.language
+getprop persist.sys.language
+echo ro.product.locale
+getprop ro.product.locale
+echo ro.product.locale.language
+getprop ro.product.locale.language
+echo ro.product.locale.region
+getprop ro.product.locale.region
+echo ro.build.target_country
+getprop ro.build.target_country
+user.language
+ [pt] 
+user.region
+ [BR] 
+persist.sys.locale
+fr-CA
+persist.sys.language
+ [pt] 
+ro.product.locale
+en-US
+ro.product.locale.language
+ [en] 
+ro.product.locale.region
+ [GB]
+ro.build.target_country
+US
+
+
+[persist.sys.language]: [pt] 
+[ro.product.locale.language]: [en] 
+[ro.product.locale.region]: [GB]
+[user.language]: [pt] 
+[user.region]: [BR] 
+
+[09:37 sdcard ]$ awk '{print $0}' file > tmp && mv tmp file                               awk: file: No such file or directory                                                      [09:40 sdcard ]$ awk '/en/ && /GB/ && /UTF/ { print substr($1,2);}' locale.gen
+en_GB.UTF-8
