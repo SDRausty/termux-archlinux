@@ -1,6 +1,0 @@
-Error codes added.
-Help expanded; Verbose help added.
-libandroid-shmem support added.
-set -Eeou pipefail added.
-sysinfo () enchanced to accept custom directores.
-Traps implemented.
