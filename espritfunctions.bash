@@ -1,8 +1,8 @@
-#!/bin/env bash
-# Copyright 2017-2019 by SDRausty. All rights reserved.  🌎 🌍 🌏 🌐 🗺
+#!/usr/bin/env bash
+# Copyright 2017-2020 by SDRausty. All rights reserved.  🌎 🌍 🌏 🌐 🗺
 # Hosted sdrausty.github.io/TermuxArch courtesy https://pages.github.com
-# https://sdrausty.github.io/TermuxArch/README has info about this project. 
-# https://sdrausty.github.io/TermuxArch/CONTRIBUTORS Thank you for your help.  
+# https://sdrausty.github.io/TermuxArch/README has info about this project.
+# https://sdrausty.github.io/TermuxArch/CONTRIBUTORS Thank you for your help.
 ################################################################################
 
 addlangq() {
@@ -27,13 +27,13 @@ addlangq() {
 	done
 }
 
-_BLOOM_() { # Bloom = `setupTermuxArch.bash manual verbose` 
+_BLOOM_() { # Bloom = `setupTermuxArch.bash manual verbose`
 	if [[ -d "$HOME"/TermuxArchBloom ]]
-	then 
-		_RMBLOOMQ_ 
+	then
+		_RMBLOOMQ_
 	fi
 	if [[ ! -d "$HOME"/TermuxArchBloom ]]
-	then 
+	then
 		mkdir "$HOME"/TermuxArchBloom
 	fi
 	cp *sh "$HOME"/TermuxArchBloom
@@ -63,6 +63,11 @@ _COPYSTARTBIN2PATHQ_() {
 		printf "\\n\\e[0;34m 🕛 > 🕚 \\e[0mYou answered \\e[33;1m$answer\\e[0m.\\n\\n\\e[0;34m 🕛 > 🕚 \\e[0mAnswer yes or no [Y|n]\\n\\n"
 	fi
 	done
+}
+
+
+_DOTHF_() { # do the file
+	[[ -f $1 ]] && ( printf "%s\\n" "==> mv -f $1 $1.bkp" && mv -f "$1" "$1.bkp" ) || printf "%s" "copy dot files if found : file not found : continuing : "
 }
 
 _EDITFILES_() {
@@ -97,11 +102,11 @@ _EDITORS_() {
 	done
 	for i in "${!ceds[@]}"
 	do
-		cedst+="\`\\e[1;32m${ceds[$i]}\\e[0;32m\`, "
+		cedst+="${ceds[$i]}, "
 	done
 	for i in "${!ceds[@]}"
 	do
-		edq 
+		edq
 		if [[ "$ind" = 1 ]]
 		then
 			break
@@ -140,7 +145,7 @@ _EDQAQUESTION_() {
 		then
 			printf "The following editor(s) $cedst\\b\\b are present.  Would you like to use \`\\e[1;32m${ceds[$i]}\\e[0;32m\` to edit \`\\e[1;32msetupTermuxArchConfigs.bash\\e[0;32m\`?  "
 			read -n 1 -p "Answer yes or no [Y|n]. "  yn
-		else 
+		else
 			printf "Change the worldwide CMIRROR to a CMIRROR that is geographically nearby.  Choose only ONE active CMIRROR in the CMIRRORs file that you are about to edit.  The following editor(s) $cedst\\b\\b are present.  Would you like to use \`\\e[1;32m${ceds[$i]}\\e[0;32m\` to edit the Arch Linux configuration files?  "
 			read -n 1 -p "Answer yes or no [Y|n]. "  yn
 		fi
@@ -166,7 +171,7 @@ _EDQ2_() {
 		then
 			printf "\\n\\e[1;34m  Would you like to use \\e[1;32mnano\\e[1;34m or \\e[1;32mvi\\e[1;34m to edit \\e[1;32msetupTermuxArchConfigs.bash\\e[1;34m?  "
 			read -n 1 -p "Answer nano or vi [n|V]? "  nv
-		else 
+		else
 			printf "\\e[1;34m  Change the worldwide CMIRROR to a CMIRROR that is geographically nearby.  Choose only ONE active CMIRROR in the CMIRRORs file that you are about to edit.  Would you like to use \\e[1;32mnano\\e[1;34m or \\e[1;32mvi\\e[1;34m to edit the Arch Linux configuration files?  "
 			read -n 1 -p "Answer nano or vi [n|V]? "  nv
 		fi
@@ -184,7 +189,7 @@ _EDQ2_() {
 		else
 			printf "\\nYou answered \\e[36;1m$nv\\e[1;32m.\\n\\nAnswer nano or vi [n|v].  \\n"
 		fi
-	done	
+	done
 	printf "\\n"
 }
 
@@ -211,15 +216,15 @@ _RMBLOOMQ_() {
 			read -n 1 -p "Refresh $HOME/TermuxArchBloom? [Y|n] " RBUANSWER
 			if [[ "$RBUANSWER" = [Ee]* ]] || [[ "$RBUANSWER" = [Nn]* ]] || [[ "$RBUANSWER" = [Qq]* ]]
 			then
-				printf "\\n" 
-				exit $? 
+				printf "\\n"
+				exit $?
 			elif [[ "$RBUANSWER" = [Yy]* ]] || [[ "$RBUANSWER" = "" ]]
 			then
 				printf "\\e[30mUninstalling $HOME/TermuxArchBloom…\\n"
 				if [[ -d "$HOME"/TermuxArchBloom ]]
 				then
-					rm -rf "$HOME"/TermuxArchBloom 
-				else 
+					rm -rf "$HOME"/TermuxArchBloom
+				else
 					printf "Uninstalling $HOME/TermuxArchBloom, nothing to do for $INSTALLDIR.\\n\\n"
 				fi
 				printf "Uninstalling $HOME/TermuxArchBloom done.\\n\\n"
@@ -238,7 +243,7 @@ _RUNFINISHSETUPQ_() {
 		read -n 1 -p "Answer yes to complete the Arch Linux configuration and update now; Or answer no for later [Y|n] " nl
 	if [[ "$nl" = [Yy]* ]] || [[ "$nl" = "" ]]
 	then
-		_RUNFINISHSETUP_ 
+		_RUNFINISHSETUP_
 		break
 	elif [[ "$nl" = [Nn]* ]]
 	then
@@ -266,14 +271,14 @@ spinnerdepreciated() { # Based on https://github.com/ringohub/sh-spinner
 	SPINNER="🕛🕐🕑🕓🕔🕕🕖🕗🕘🕙🕚"
 	task="$1"
 	msg="$2"
-	while true 
+	while true
 	do
 		jobs %1 > /dev/null 2>&1
 		[[ "$?" = 0 ]] || {
 		printf " %s %s\\e[1;34m:\\e[1;32m %s\\e[?25h\\e[0m\\n\\n" "✓" "$task" "DONE                                "
 		break
 		}
-		for (( i=0; i<${#SPINNER}; i++ )) 
+		for (( i=0; i<${#SPINNER}; i++ ))
 		do
 			sleep 0.05
 			printf " %s %s %s\\r" "${SPINNER:$i:1}" "$task" "$msg"
