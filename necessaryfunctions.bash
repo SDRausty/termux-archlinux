@@ -362,15 +362,15 @@ _MD5CHECK_() {
 
 _PREPROOTDIR_() {
 	cd "$INSTALLDIR"
-	[ ! -e etc ] &&	mkdir -p etc
-	[ ! -e home ] && mkdir -p home
-	[ ! -e root/bin ] && mkdir -p root/bin
-	[ ! -e usr/bin ] && mkdir -p usr/bin
-	[ ! -e var/binds ] && mkdir -p var/binds
+	[[ ! -d etc ]] && mkdir -p etc
+	[[ ! -d home ]] && mkdir -p home
+	[[ ! -d root/bin ]] && mkdir -p root/bin
+	[[ ! -d usr/bin ]] && mkdir -p usr/bin
+	[[ ! -d var/binds ]] && mkdir -p var/binds
 }
 
 _PREPINSTALLDIR_() {
-	_PREPROOTDIR_
+	_PREPROOTDIR_ || _PSGI1ESTRING_ "_PREPROOTDIR_ _PREPINSTALLDIR_ necessaryfunctions.bash ${0##*/}"
 	_SETLANGUAGE_
 	_ADDADDS_
 	_DOPROXY_
