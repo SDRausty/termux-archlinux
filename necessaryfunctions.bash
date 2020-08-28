@@ -272,7 +272,6 @@ _MAKESTARTBIN_() {
 	printf "\\e[1;32m%s\\e[0;32m%s\\e[1;32m%s\\e[0;32m%s\\e[1;32m%s\\e[0;32m%s\\n\\n" "$STARTBIN r[aw]" "  construct the " "$STARTBIN " "proot statement from exec.../bin/.  For example " "$STARTBIN r su " "will exec su in Arch Linux."
 	printf "\\e[1;32m%s\\e[0;32m%s\\e[1;32m%s\\e[0;32m%s\\n\\n\\e[0m" "$STARTBIN s[u] user command" "  login as user and execute command.  Use " "$STARTBIN c addauser user " "first to create this user and user's home directory."
 	}
-
 	# [] Default Arch Linux in Termux PRoot root login.
 	if [[ -z "\${1:-}" ]]
 	then
@@ -390,9 +389,7 @@ _PREPINSTALLDIR_() {
 	_MAKEFINISHSETUP_
 	_MAKESETUPBIN_
 	_MAKESTARTBIN_
-  	[[ $ELCR -eq 0 ]] && exit || _PSGI1ESTRING_ "necessaryfunctions.bash ${0##*/}"
-	
-
+  	[[ $ELCR == 0 ]] && exit || _PSGI1ESTRING_ "_PREPINSTALLDIR_ necessaryfunctions.bash ${0##*/}" # create TermuxArchBloom and Arch Linux in Termux PRoot root directories skeleton with files.  Then exit without installing the root file system;  Commands 'setupTermuxArch b[l[oom]]' can be used to access these features.
 }
 
 _PREPROOT_() {
@@ -436,7 +433,7 @@ _RUNFINISHSETUP_() {
 	"$INSTALLDIR"/root/bin/setupbin.bash || _PRINTPROOTERROR_
 }
 
-_SETLANGUAGE_() { # This function uses device system settings to set locale.  To generate locales in a preferred language, you can use "Settings > Language & Keyboard > Language" in Android; Then run 'setupTermuxArch r for a quick system refresh.
+_SETLANGUAGE_() { # This function uses device system settings to set locale.  To generate locales in a preferred language, you can use "Settings > Language & Keyboard > Language" in Android; Then run 'setupTermuxArch r' for a quick system refresh to regenerate locales in your preferred language.
 	ULANGUAGE="unkown"
   	LANGIN=([0]="$(getprop user.language)")
 	LANGIN+=([1]="$(getprop user.region)")
