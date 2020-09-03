@@ -7,8 +7,8 @@
 IFS=$'\n\t'
 set -Eeuo pipefail
 shopt -s nullglob globstar
-umask 000
-VERSIONID=2.0.205
+umask 0002
+VERSIONID=2.0.206
 ## INIT FUNCTIONS ##############################################################
 _STRPERROR_() { # run on script error
 	local RV="$?"
