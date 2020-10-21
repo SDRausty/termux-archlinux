@@ -7,14 +7,17 @@
 IFS=$'\n\t'
 set -Eeuo pipefail
 shopt -s nullglob globstar
-VERSIONID=2.0.268
+VERSIONID=2.0.269
 umask 0022
 unset LD_PRELOAD
 ## INIT FUNCTIONS ##############################################################
 _STRPERROR_() { # run on script error
 	local RV="$?"
 	printf "\\e[?25h\\n\\e[1;48;5;138m %s\\e[0m\\n" "TermuxArch WARNING:  Generated script signal ${RV:-unknown} near or at line number ${1:-unknown} by '${2:-command}'!"
-	[[ -z "${ARGS:-}" ]] && printf "\\e[1;32mPlease run 'bash %s' again.\\n\\e[1;32m\\n\\e[0m" "${0##*/}" || printf "\\e[1;32mPlease run 'bash %s' again.\\n\\e[1;32m\\n\\e[0m" "${0##*/} $ARGS"
+	_ADERHELP_() {
+		printf "\\e[1;32mThe command 'bash %s help' has information how to use '%s' effectively.\\n" "${0##*/}" "${0##*/}"
+	}
+	[[ -z "${ARGS:-}" ]] && printf "\\e[1;32mPlease run 'bash %s' again or use 'bash %s refresh'.\\n\\e[1;32m\\n\\e[0m" "${0##*/}" "${0##*/}" && _ADERHELP_ || printf "\\e[1;32mPlease run 'bash %s' again or use 'bash %s refresh'.\\n\\e[1;32m\\n\\e[0m" "${0##*/} $ARGS" "${0##*/}" && _ADERHELP_
 	if [[ "$RV" = 4 ]]
 	then
 		printf "\\n\\e[1;48;5;139m %s\\e[0m\\n" "Ensure background data is not restricted.  Check the wireless connection."
@@ -418,7 +421,7 @@ _OPT1_() {
 	elif [[ "$2" = [Rr]* ]]
 	then
 		export LCR="1"
-		printf "\\n\\e[1;32m%s\\e[1;34m: \\e[0;32m%s '%s' %s\\n\\e[0m" "Setting mode" "minimal refresh;  Use" "${0##*/} re[fresh]" "for full refresh."
+		printf "\\n\\e[1;32m%s\\e[1;34m: \\e[0;32m%s '%s' %s\\n\\e[0m" "Setting mode" "minimal refresh;  You can use" "${0##*/} re[fresh]" "for full refresh."
 		shift
 		_ARG2DIR_ "$@"
 		_INTROREFRESH_ "$@"
