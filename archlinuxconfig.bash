@@ -30,7 +30,7 @@ printf "\\\\e[0;32m%s\\\\n\\\\e[1;32m" "Adding Arch Linux in Termux PRoot user '
 sed -i "/# %wheel ALL=(ALL) NOPASSWD: ALL/ s/^# *//" /etc/sudoers
 sed -i "/# ALL ALL=(ALL) ALL/ s/^# *//" /etc/sudoers
 sed -i "s/# ALL ALL=(ALL) ALL/ALL ALL=(ALL) NOPASSWD: ALL/g" /etc/sudoers
-grep -q 'ftp_proxy' /etc/sudoers && : || echo 'Defaults env_keep += "ftp_proxy http_proxy https_proxy"' >> /etc/sudoers
+grep -q 'ftp_proxy' /etc/sudoers && : || printf "%s\\\\n" 'Defaults env_keep += "ftp_proxy http_proxy https_proxy"' >> /etc/sudoers
 sed -i "s/required/sufficient/g" /etc/pam.d/su
 sed -i "s/^#auth/auth/g" /etc/pam.d/su
 useradd -k /root -m -s /bin/bash "\$1" -U
@@ -271,14 +271,14 @@ printf "\\\\n\\\\e[1;32m==> \\\\e[1;37m%s \\\\e[1;32m%s\\\\e[0m%s...\\\\n\\\\n" 
 if [[ -f "\$HOME"/.hushlogin ]] && [[ -f "\$HOME"/.hushlogout ]]
 then
 rm "\$HOME"/.hushlogin "\$HOME"/.hushlogout
-echo "Hushed login and logout: OFF"
+printf "%s\\\\n" "Hushed login and logout: OFF"
 elif [[ -f "\$HOME"/.hushlogin ]] || [[ -f "\$HOME"/.hushlogout ]]
 then
 touch "\$HOME"/.hushlogin "\$HOME"/.hushlogout
-echo "Hushed login and logout: ON"
+printf "%s\\\\n" "Hushed login and logout: ON"
 else
 touch "\$HOME"/.hushlogin "\$HOME"/.hushlogout
-echo "Hushed login and logout: ON"
+printf "%s\\\\n" "Hushed login and logout: ON"
 fi
 # ch EOF
 EOM
@@ -582,15 +582,28 @@ _ADDkeys_() {
 # set customized commands for Arch Linux 32
 if [[ "$CPUABI" = "$CPUABIX86" ]] || [[ "$CPUABI" = i386 ]]
 then
-X86INT="UPGDPKGS=(\"a/archlinux32-keyring-transition/archlinux32-keyring-transition-20191103-1-any.pkg.tar.xz\" \"l/lzo/lzo-2.10-3.0-i686.pkg.tar.xz\" \"p/pacman/pacman-5.0.1-4-i686.pkg.tar.xz\" \"z/zstd/zstd-1.1.2-1-i686.pkg.tar.xz\")
+X86INT="UPGDPKGS=(\"a/archlinux32-keyring-transition/archlinux32-keyring-transition-20190108-1-any.pkg.tar.xz\" \"l/libarchive/libarchive-3.3.3-1.0-i686.pkg.tar.xz\" \"o/openssl-1.0/openssl-1.0-1.0.2.t-1.0-i686.pkg.tar.xz\" \"p/pacman/pacman-5.2.1-1.4-i686.pkg.tar.xz\" \"z/zstd/zstd-1.4.4-1.0-i686.pkg.tar.xz\")
 for UPGDPAKG in \${UPGDPKGS[@]}
 do
-printf \"%s\\n\" \"Running curl -OL https://archive.archlinux32.org/packages/\$UPGDPAKG\"
-curl -C - --fail --retry 4 -OL https://archive.archlinux32.org/packages/\$UPGDPAKG ||:
+if [[ ! -f \"\${UPGDPAKG##*/}\" ]]
+then
+curl -C - --fail --retry 4 -OL {\"https://archive.archlinux32.org/packages/\$UPGDPAKG.sig,https://archive.archlinux32.org/packages/\$UPGDPAKG\"} ||:
+else
+printf \"%s\\n\" \"File '\${UPGDPAKG##*/}' is already downloaded.\"
+fi
 done
-pacman -U \${UPGDPKGS[@]##*/} --noconfirm || printf \"\\e[1;31m\\n%s\\e[1;37m%s\\e[0m\\n\" \"The command 'pacman -U \$(printf \"%s\" \"\${UPGDPKGS[@]##*/}\") --noconfirm' did not succeed: continuing...\""
+pacman -U \${UPGDPKGS[0]##*/} --noconfirm || sudo pacman -U \${UPGDPKGS[0]##*/} --noconfirm || printf \"\\e[1;31m\\n%s\\e[1;37m%s\\e[0m\\n\" \"The command 'pacman -U \$(printf \"%s\" \"\${UPGDPKGS[0]##*/}\") --noconfirm' did not succeed: continuing...\"
+pacman-key --refresh-keys
+pacman -U \${UPGDPKGS[@]##*/} --noconfirm || sudo pacman -U \${UPGDPKGS[@]##*/} --noconfirm || printf \"\\e[1;31m\\n%s\\e[1;37m%s\\e[0m\\n\" \"The command 'pacman -U \$(printf \"%s\" \"\${UPGDPKGS[@]##*/}\") --noconfirm' did not succeed: continuing...\""
+X86IPT="(1/1)"
+X86INK=":"
 else
 X86INT=":"
+X86IPT="(1/2)"
+X86INK="printf \"\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman -S %s --noconfirm --color=always\\\\e[0;32m...\\\\n\" \"\$ARGS\"
+pacman -S \"\${KEYRINGS[@]}\" --noconfirm --color=always || sudo pacman -S \"\${KEYRINGS[@]}\" --noconfirm --color=always
+printf \"\\\\n\\\\e[1;32m[2/2] \\\\e[0;34mWhen \\\\e[1;37mAppending keys from archlinux.gpg\\\\e[0;34m appears on the screen, the installation process can be accelerated.  The system desires a lot of entropy at this part of the install procedure.  To generate as much entropy as possible quickly, watch and listen to a file on your device.  \\\\n\\\\nThe program \\\\e[1;32mpacman-key\\\\e[0;34m will want as much entropy as possible when generating keys.  Entropy is also created through tapping, sliding, one, two and more fingers tapping with short and long taps.  When \\\\e[1;37mAppending keys from archlinux.gpg\\\\e[0;34m appears on the screen, use any of these simple methods to accelerate the installation process if it is stalled.  Put even simpler, just do something on device.  Browsing files will create entropy on device.  Slowly swiveling the device in space and time will accelerate the installation process.  This method alone might not generate enough entropy (a measure of randomness in a closed system) for the process to complete quickly.  Use \\\\e[1;32mbash ~%s/bin/we \\\\e[0;34min a new Termux session to watch entropy on device.\\\\n\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman-key --populate\\\\e[0;32m...\\\\n\" \"$DARCH\"
+pacman-key --populate"
 fi
 _CFLHDR_ root/bin/keys
 cat >> root/bin/keys <<- EOM
@@ -635,8 +648,7 @@ KEYRINGS[1]="archlinuxarm-keyring"
 KEYRINGS[2]="ca-certificates-utils"
 elif [[ "\$1" = x86 ]]
 then
-KEYRINGS[0]="archlinux32-keyring-transition"
-KEYRINGS[1]="ca-certificates-utils"
+KEYRINGS[0]=""
 elif [[ "\$1" = x86_64 ]]
 then
 KEYRINGS[0]="archlinux-keyring"
@@ -647,18 +659,14 @@ fi
 ARGS="\${KEYRINGS[@]}"
 printf '\033]2;  🔑 TermuxArch %s 📲 \007' "'\${0##*/} \$ARGS'"
 printf "\\\\n\\\\e[1;32m==> \\\\e[1;37m%s \\\\e[0;32m%s \\\\e[1;32m%s %s \\\\e[0m%s...\\\\n" "Running" "TermuxArch" "\${0##*/}" "\$ARGS" "\$VERSIONID"
-printf "\\\\n\\\\e[1;32m[1/2] \\\\e[0;34mWhen \\\\e[0;37mgpg: Generating pacman keyring master key\\\\e[0;34m appears on the screen, the installation process can be accelerated.  The system desires a lot of entropy at this part of the install procedure.  To generate as much entropy as possible quickly, watch and listen to a file on your device.  \\\\n\\\\nThe program \\\\e[1;32mpacman-key\\\\e[0;34m will want as much entropy as possible when generating keys.  Entropy is also created through tapping, sliding, one, two and more fingers tapping with short and long taps.  When \\\\e[0;37mgpg: Generating pacman keyring master key\\\\e[0;34m appears on the screen, use any of these simple methods to accelerate the installation process if it is stalled.  Put even simpler, just do something on device.  Browsing files will create entropy on device.  Slowly swiveling the device in space and time will accelerate the installation process.  This method alone might not generate enough entropy (a measure of randomness in a closed system) for the process to complete quickly.  You can use \\\\e[1;32mbash ~%s/bin/we \\\\e[0;34min a new Termux session to watch entropy on device.\\\\n\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman-key --init\\\\e[0;32m...\\\\n" "$DARCH"
+printf "\\\\n\\\\e[1;32m%s \\\\e[0;34mWhen \\\\e[0;37mgpg: Generating pacman keyring master key\\\\e[0;34m appears on the screen, the installation process can be accelerated.  The system desires a lot of entropy at this part of the install procedure.  To generate as much entropy as possible quickly, watch and listen to a file on your device.  \\\\n\\\\nThe program \\\\e[1;32mpacman-key\\\\e[0;34m will want as much entropy as possible when generating keys.  Entropy is also created through tapping, sliding, one, two and more fingers tapping with short and long taps.  When \\\\e[0;37mgpg: Generating pacman keyring master key\\\\e[0;34m appears on the screen, use any of these simple methods to accelerate the installation process if it is stalled.  Put even simpler, just do something on device.  Browsing files will create entropy on device.  Slowly swiveling the device in space and time will accelerate the installation process.  This method alone might not generate enough entropy (a measure of randomness in a closed system) for the process to complete quickly.  You can use \\\\e[1;32mbash ~%s/bin/we \\\\e[0;34min a new Termux session to watch entropy on device.\\\\n\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman-key --init\\\\e[0;32m...\\\\n" "$X86IPT" "$DARCH"
 pacman-key --init || sudo pacman-key --init || _PRTERROR_
 chmod 700 /etc/pacman.d/gnupg
+pacman-key --populate || sudo pacman-key --populate || _PRTERROR_
 $X86INT || _PRTERROR_
-pacman-key --populate || sudo pacman-key --populate || _PRTERROR_
-# printf "\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman -S %s --noconfirm --color=always\\\\e[0;32m...\\\\n" "\$ARGS"
-pacman -S "\${KEYRINGS[@]}" --noconfirm --color=always || sudo pacman -S "\${KEYRINGS[@]}" --noconfirm --color=always || _PRTERROR_
-printf "\\\\n\\\\e[1;32m[2/2] \\\\e[0;34mWhen \\\\e[1;37mAppending keys from archlinux.gpg\\\\e[0;34m appears on the screen, the installation process can be accelerated.  The system desires a lot of entropy at this part of the install procedure.  To generate as much entropy as possible quickly, watch and listen to a file on your device.  \\\\n\\\\nThe program \\\\e[1;32mpacman-key\\\\e[0;34m will want as much entropy as possible when generating keys.  Entropy is also created through tapping, sliding, one, two and more fingers tapping with short and long taps.  When \\\\e[1;37mAppending keys from archlinux.gpg\\\\e[0;34m appears on the screen, use any of these simple methods to accelerate the installation process if it is stalled.  Put even simpler, just do something on device.  Browsing files will create entropy on device.  Slowly swiveling the device in space and time will accelerate the installation process.  This method alone might not generate enough entropy (a measure of randomness in a closed system) for the process to complete quickly.  Use \\\\e[1;32mbash ~%s/bin/we \\\\e[0;34min a new Termux session to watch entropy on device.\\\\n\\\\n\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman-key --populate\\\\e[0;32m...\\\\n" "$DARCH"
-pacman-key --populate || sudo pacman-key --populate || _PRTERROR_
+$X86INK || _PRTERROR_
 printf "\\\\e[1;32m==>\\\\e[0m Running \\\\e[1mpacman -Ss keyring --color=always\\\\e[0m...\\\\n"
 pacman -Ss keyring --color=always || sudo pacman -Ss keyring --color=always || _PRTERROR_
-pacman -Syy || pacman -Syy || _PRTERROR_
 # keys EOF
 EOM
 chmod 700 root/bin/keys
@@ -892,20 +900,23 @@ chmod 700 root/bin/t
 _ADDthstartarch_() {
 _CFLHDR_ root/bin/th"$STARTBIN"
 cat >> root/bin/th"$STARTBIN" <<- EOM
-echo $STARTBIN help
+_PRTERROR_() {
+printf "\\e[1;31mERROR :\\e[1;37m%s\\e[0m\\n" " Please run '\${0##*/}' again."
+}
+printf "%s\\n" "$STARTBIN help"
 $STARTBIN help
 sleep 1
-echo $STARTBIN command "pwd && whoami"
-$STARTBIN command "pwd && whoami"
+printf '%s command "pwd && whoami"\\n' "$STARTBIN"
+$STARTBIN command "pwd && whoami" || _PRTERROR_
 sleep 1
-echo $STARTBIN login user
-$STARTBIN login user ||:
-echo $STARTBIN raw su user -c "pwd && whoami"
-$STARTBIN raw su user -c "pwd && whoami"
+printf "%s\\n" "STARTBIN login user"
+$STARTBIN login user || _PRTERROR_
+printf '%s raw su user -c "pwd && whoami"\\n' "$STARTBIN"
+$STARTBIN raw su user -c "pwd && whoami" || _PRTERROR_
 sleep 1
-echo $STARTBIN su user "pwd && whoami"
-$STARTBIN su user "pwd && whoami"
-echo th$STARTBIN done
+printf '%s su user "pwd && whoami"\\n' "$STARTBIN"
+$STARTBIN su user "pwd && whoami" || _PRTERROR_
+printf "%s\\n" "th$STARTBIN done"
 # th"$STARTBIN" EOF
 EOM
 chmod 700 root/bin/thstartarch
@@ -1032,14 +1043,14 @@ fi
 en0=\$((\${entropy0}*\$multi))
 
 esleep() {
-int=\$(echo "\$i/\$entropy0" | bc -l)
+int=\$(printf "%s\\\\n" "\$i/\$entropy0" | bc -l)
 for i in {1..5}; do
-if (( \$(echo "\$int > 0.1"|bc -l) ))
+if (( \$(printf "%s\\\\n" "\$int > 0.1"|bc -l) ))
 then
-tmp=\$(echo "\${int}/100" | bc -l)
+tmp=\$(printf "%s\\\\n" "\${int}/100" | bc -l)
 int=\$tmp
 fi
-if (( \$(echo "\$int > 0.1"|bc -l) ))
+if (( \$(printf "%s\\\\n" "\$int > 0.1"|bc -l) ))
 then
 break
 fi
