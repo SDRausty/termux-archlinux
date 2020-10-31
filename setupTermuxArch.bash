@@ -5,7 +5,7 @@
 # command 'setupTermuxArch h[elp]' has information how to use this file
 ################################################################################
 IFS=$'\n\t'
-VERSIONID=2.0.327
+VERSIONID=2.0.328
 set -Eeuo pipefail
 shopt -s nullglob globstar
 umask 0022
@@ -358,7 +358,12 @@ fi
 _IFEDITOR_() {
 if [[ -z "${EDITOR:-}" ]]
 then
+if command -v editor
+then
 USEREDIT="editor"
+else
+_EDITORS_
+fi
 else
 USEREDIT="$EDITOR"
 fi
@@ -367,7 +372,6 @@ _IFEDITOR_
 
 _MANUAL_() {
 printf '\033]2; bash setupTermuxArch manual 📲 \007'
-_EDITORS_
 if [[ -f "${WDIR}setupTermuxArchConfigs.bash" ]]
 then
 $USEREDIT "${WDIR}setupTermuxArchConfigs.bash"
