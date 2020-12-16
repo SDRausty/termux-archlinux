@@ -4,25 +4,13 @@
 # https://termuxarch.github.io/TermuxArch/CONTRIBUTORS thank you for helping
 # command 'setupTermuxArch h[elp]' has information how to use this file
 ################################################################################
-VERSIONID=2.0.427
+VERSIONID=2.0.428
 set -Eeuo pipefail
 shopt -s nullglob globstar
 umask 0022
 unset LD_PRELOAD
 ## INIT FUNCTIONS ##############################################################
 ## The entire dataset can be viewed and work on with command 'setupTermuxArch bloom' which downloads all the components of TermuxArch into a ~/TermuxArchBloom directory in the home directory.  The command 'setupTermuxArch bloom' is very similar to command 'setupTermuxArch manual' but much more expansive, verbose.  Command 'setupTermuxArch h[elp]' has additional information how to use this file.
-
-_PRINTERRORMSG_() {
-printf "\\e[1;31m%s\\e[1;37m%s\\e[1;32m%s\\e[1;37m%s\\n\\n" "Signal generated in '$1' : Cannot complete task : " "Continuing..."
-printf "\\e[1;34m%s\\e[0;34m%s\\e[1;34m%s\\e[0m\\n\\n" "  If you can find improvements and the timr for " "${0##*}" " please open an issue and an accompanying pull request.  A PR can assist in shedding more light on an issue."
-}
-
-_TAMATRIXEXIT_() { # run when Matrix presentation ends
-if [[ ! -z "${TAMATRIXENDLCR:-}" ]]
-then
-_TAMATRIXEND_
-fi
-}
 
 _STRPERROR_() { # run on script error
 local RV="$?"
@@ -133,6 +121,17 @@ cp "$TAMPDIR/setupTermuxArch" "$0"
 . $0 $ARGS
 fi
 cd "$TAMPDIR"
+}
+
+_CHOOSEABI_(){
+if [[ -z "$ABILIST64" ]]
+then
+ARCHITEC="i386"
+CPUABI="x86"
+else
+ARCHITEC="x86_64"
+CPUABI="x86_64"
+fi
 }
 
 _COREFILES_() {
@@ -568,6 +567,11 @@ _PREPTMPDIR_ || _PSGI1ESTRING_ "_PREPTMPDIR_ _PREPTERMUXARCH_ ${0##*/}"
 _EDITORCHOOSER_
 }
 
+_PRINTERRORMSG_() {
+printf "\\e[1;31m%s\\e[1;37m%s\\e[1;32m%s\\e[1;37m%s\\n\\n" "Signal generated in '$1' : Cannot complete task : " "Continuing..."
+printf "\\e[1;34m%s\\e[0;34m%s\\e[1;34m%s\\e[0m\\n\\n" "  If you can find improvements and the timr for " "${0##*}" " please open an issue and an accompanying pull request.  A PR can assist in shedding more light on an issue."
+}
+
 _PRPREFRESH_() {
 printf "\\n%s\\n" "Refresh mode is set to refresh mode $1;  Initializing system refresh..."
 LCR="$1"
@@ -597,7 +601,7 @@ _PRINTUSAGE_() {
 printf "\\n\\e[1;32m  %s     \\e[0;32mcommands \\e[1;32m%s \\e[0;32m%s\\n" "HELP" "'${0##*/} he[lp]'" "show this help screen"
 printf "\\n\\e[1;32m  %s    \\e[0;32mcommand \\e[1;32m%s \\e[0;32m%s\\n" "TERSE" "'${0##*/} he[lp]'" "shows the terse help screen"
 printf "\\n\\e[1;32m  %s  \\e[0;32mcommand \\e[1;32m%s \\e[0;32m%s\\n" "VERBOSE" "'${0##*/} h'" "shows the verbose help screen"
-printf "\\n\\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\n\\n%s \\e[1;32m%s\\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s\\e[0;32m%s\\n" "Usage information for" "${0##*/}" "$VERSIONID.  Some arguments can be abbreviated to one, two and three letters each;  Two and three letter arguments are acceptable.  For example" "'bash ${0##*/} cs'" "will use" "'curl'" "to download TermuxArch and produce a file like" "'setupTermuxArchSysInfo$STIME.log'" "populated with system information.  If you have a new smartphone that you are not familiar with, this file" "'setupTermuxArchSysInfo$STIME.log'" "might make for an interesting read in order to find out more about the device you might be holding in the palm of your hand right at this moment." "User configurable variables are in file" "'setupTermuxArchConfigs.bash'" ".  To create this file from file" "kownconfigurations.bash" "in the working directory, execute" "'bash ${0##*/} manual'" "to create and edit file" "setupTermuxArchConfigs.bash" "."
+printf "\\n\\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\n\\n%s \\e[1;32m%s\\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s\\e[0;32m%s\\n" "Usage information for" "${0##*/}" "$VERSIONID.  Some arguments can be abbreviated to one, two and three letters each;  Two and three letter arguments are acceptable.  For example" "'bash ${0##*/} cs'" "will use" "'curl'" "to download TermuxArch and produce a file like" "'setupTermuxArchSysInfo$STIME.log'" "populated with system information.  If you have a new smartphone that you are not familiar with, this file" "'setupTermuxArchSysInfo$STIME.log'" "might make for an interesting read in order to find out more about the device you might be holding in the palm of your hand right at this moment." "User configurable variables are in file" "'setupTermuxArchConfigs.bash'" ".  To create this file from file" "knownconfigurations.bash" "in the working directory, execute" "'bash ${0##*/} manual'" "to create and edit file" "setupTermuxArchConfigs.bash" "."
 printf "\\n\\e[1;32m  %s\\e[0;32m  %s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s\\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s\\n" "INSTALL" "You can run" "${0##*/}" "without arguments in a bash shell to install Arch Linux in Termux PRoot container in a smartphone, smartTV, table, wearable and more...  Command" "'bash ${0##*/} curl'" "will envoke" "curl" "as the download manager.  You can copy" "knownconfigurations.bash" "to" "setupTermuxArchConfigs.bash" "with the command" "'bash ${0##*/} manual'" "to edit your preferred CMIRROR site, refine the init statement and to access more options.  Change CMIRROR to desired geographic location to resolve download, 404 and checksum issues should these occur.  After editing" "setupTermuxArchConfigs.bash" ", you can run" "'bash ${0##*/}'" "and" "setupTermuxArchConfigs.bash" "loads automatically from the working directory.  User configurable variables are present in this file for your convenience." "  This link https://github.com/SDRausty/TermuxArch/issues/212 at GitHub has the most current information about setting Arch Linux in Termux PRoot as the default login shell in Termux in your smartphone, tablet, smartTV, wearable and more.  If you choose to, or are simply curious about setting Arch Linux in Termux PRoot as the default login shell, please be well acquainted with safe mode;  Long tapping on NEW SESSION will open a new session in safe mode.  This mode can be used to reset the default shell."
 printf "\\n\\e[1;32m  %s    \\e[0;32mcommand \\e[1;32m%s \\e[0;32m%s\\n" "PURGE" "'${0##*/} purge'" "uninstalls Arch Linux in PRoot from Termux"
 printf "\\n\\e[1;32m  %s  \\e[0;32mcommand \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s \\e[0;32m%s \\e[1;32m%s\\e[0;32m%s\\e[1;32m%s\\e[0;32m%s\\n\\n" "SYSINFO" "'${0##*/} sysinfo'" "creates a system information file;  A file like" "setupTermuxArchSysInfo$STIME.log" "will be populated with device and system information in the working directory.  Please post information from this file along with details at" "https://github.com/TermuxArch/TermuxArch/issues" " if questions or comments are related to a particular device;  Should screenshots help in resolving an issue, include these with information from this system information log file as well.  If you are sharing an issue please consider creating a pull request at " "https://github.com/TermuxArch/TermuxArch/pulls" " also.  A pull request can give a much better perspective of how an issue can be easily resolved."
@@ -766,7 +770,14 @@ exit
 fi
 }
 
-## USER INFORMATION:  Configurable variables such as mirrors and download manager options are in 'setupTermuxArchConfigs.bash'.  Working with 'kownconfigurations.bash' in the working directory is simple.  The command 'bash setupTermuxArch manual' will create 'setupTermuxArchConfigs.bash' in the working directory for editing; The command 'setupTermuxArch help' has more information.
+_TAMATRIXEXIT_() { # run when Matrix presentation ends
+if [[ ! -z "${TAMATRIXENDLCR:-}" ]]
+then
+_TAMATRIXEND_
+fi
+}
+
+## USER INFORMATION:  Configurable variables such as mirrors and download manager options are in 'setupTermuxArchConfigs.bash'.  Working with 'knownconfigurations.bash' in the working directory is simple.  The command 'bash setupTermuxArch manual' will create 'setupTermuxArchConfigs.bash' in the working directory for editing; The command 'setupTermuxArch help' has more information.
 declare -A ADM		# declare associative array for download tools
 declare -A ATM		# declare associative array for tar tools
 declare -A FILE		# declare associative array
@@ -1045,11 +1056,11 @@ printf "\\n\\e[0;32mSetting mode\\e[1;34m : \\e[1;32mupdate Termux tools with mi
 _PRPREFRESH_ "2"
 _ARG2DIR_ "$@"
 _INTROREFRESH_ "$@"
-## [v[isualorca] [manual] [install|refresh] [customdir]]  Install alternate architecture on smartphone with https://github.com/qemu/QEMU emulation. Issues [Expanding setupTermuxArch so visually impaired users can install Orca screen reader (assistive technology) and have VNC support added easily. #34](https://github.com/TermuxArch/TermuxArch/issues/34) and [Let's expand setupTermuxArch so users can install Orca screen reader (assistive technology) and also have VNC support added easily. #66](https://github.com/SDRausty/termux-archlinux/issues/66) have more information about this option.
-elif [[ "${1//-}" = [Vv]* ]]
+## [visu[alorca] [manual] [install|refresh] [customdir]]  Install alternate architecture on smartphone with https://github.com/qemu/QEMU emulation. Issues [Expanding setupTermuxArch so visually impaired users can install Orca screen reader (assistive technology) and have VNC support added easily. #34](https://github.com/TermuxArch/TermuxArch/issues/34) and [Let's expand setupTermuxArch so users can install Orca screen reader (assistive technology) and also have VNC support added easily. #66](https://github.com/SDRausty/termux-archlinux/issues/66) have more information about this option.
+elif [[ "${1//-}" = [Vv][Ii][Ss][Uu]* ]]
 then
 VLORALCR=0
-printf "\\nSetting mode to visualorca [manual] [install|refresh] [customdir].\\n"
+printf "\\nSetting mode to visu[alorca] [manual] [install|refresh] [customdir].\\n"
 ABILIST64="$(getprop ro.product.cpu.abilist64)"
 CPUABI="$(getprop ro.product.cpu.abi)"
 if [[ $CPUABI == *86* ]]
@@ -1057,14 +1068,24 @@ then
 _OPT1_ "$@"
 _INTRO_ "$@"
 else
-if [[ -z "$ABILIST64" ]]
-then
-ARCHITEC="i386"
-CPUABI="x86"
-else
-ARCHITEC="x86_64"
-CPUABI="x86_64"
+_CHOOSEABI_
+_OPT1_ "$@"
+_QEMU_
+_INTRO_ "$@"
 fi
+## [v[isualorca] [manual] [install|refresh] [customdir]]  Install alternate architecture on smartphone with https://github.com/qemu/QEMU emulation. Issues [Expanding setupTermuxArch so visually impaired users can install Orca screen reader (assistive technology) and have VNC support added easily. #34](https://github.com/TermuxArch/TermuxArch/issues/34) and [Let's expand setupTermuxArch so users can install Orca screen reader (assistive technology) and also have VNC support added easily. #66](https://github.com/SDRausty/termux-archlinux/issues/66) have more information about this option.
+elif [[ "${1//-}" = [Vv]* ]]
+then
+VLORALCR=0
+printf "\\nSetting mode to v[isualorca] [manual] [install|refresh] [customdir].\\n"
+ABILIST64="$(getprop ro.product.cpu.abilist64)"
+CPUABI="$(getprop ro.product.cpu.abi)"
+if [[ $CPUABI == *86* ]]
+then
+_OPT1_ "$@"
+_INTRO_ "$@"
+else
+_CHOOSEABI_
 _OPT1_ "$@"
 _QEMU_
 _INTRO_ "$@"
@@ -1106,7 +1127,7 @@ fi
 ## USAGE[2]: 'setupTermuxArch wget manual customdir' will install the installation in customdir with wget and use manual mode during instalation.
 ## USAGE[3]: 'setupTermuxArch wget refresh customdir' will refresh this installation using wget as the download manager.
 ## FACTS ABOUT THIS PROJECT:
-## File 'pullTermuxArchSubmodules.bash' will execute 'git pull' and populate git repository modules, and file 'pullTermuxArchSubmodules.bash' can be run directly in a PRoot environment.  File pullTermuxArchSubmodules.bash's functions are not related to updating functions run by command 'setupTermuxArch r[e[fresh]]' that have completely different update functions.  The command 'setupTermuxArch r[e[fresh]]' attempts to refresh the Arch Linux in Termux PRoot installation and the TermuxArch generated scripts to the newest version.  It also helps in the installation and configuration process if everything did not go smoothly on the first try to install Arch Linux in Termux PRoot.
+## File 'pullTermuxArchSubmodules.bash' will execute 'git pull' and populate git repository modules, and file 'pullTermuxArchSubmodules.bash' can be run directly in a PRoot environment.  File pullTermuxArchSubmodules.bash's functions are not related to updating functions run by command 'setupTermuxArch r[e[fresh]]' that have completely different update functions.  The commands 'setupTermuxArch r[e[fresh]]' attempt to refresh the Arch Linux in Termux PRoot installation and the TermuxArch generated scripts to the newest version.  It also helps in the installation and configuration process if everything did not go smoothly on the first try to install Arch Linux in Termux PRoot.
 ## Files 'setupTermuxArch.{bash,sh}' are held for backward compatibility;  Please reference file 'setupTermuxArch' as the chosen install file if aid and assistance be through sharing insight about this Arch Linux in a Termux PRoot container project which can be used on a smartphone, smartTV, tablet, wearable and more.  File 'setupTermuxArch' is earmarked as the install file name for this project.
 ## File 'setupTermuxArch' downloads as files 'setupTermuxArch.[bin,\ \(1\),\ \(2\),etc...]' through Internet browsers into Android Downloads on smartphone and Arch Linux in Termux PRoot can be installed directly from this file in Android with this command 'bash ~/storage/downloads/setupTermuxArch.bin' and similar which may also check whether there is a newer version automatically since the time it was downloaded.  If there is a newer version, this file might self update.  If this updating process went smoothly, this file will restart the process that was initially initiated by the user.
 ## These files 'setupTermuxArch[.{bash,sh}]' will NOT selfupdate to the most recent version published if they are used inside their git repository;  In this case 'git pull' or 'pullTermuxArchSubmodules.bash' can update to the newest published version.
