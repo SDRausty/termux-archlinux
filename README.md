@@ -1,6 +1,6 @@
 <link rel="prerender" href="https://sdrausty.github.io/termux-archlinux/">
 
-## [termux-arch](https://github.com/SDRausty/termux-archlinux/)
+## [termux-archlinux](https://github.com/SDRausty/termux-archlinux/)
 
 ##### -r--r--r-- [setupTermuxArch.bash](https://raw.githubusercontent.com/TermuxArch/TermuxArch/master/setupTermuxArch.bash)
 ##### -rwxrwx--- [setupTermuxArch.bash](https://TermuxArch.github.io/TermuxArch/setupTermuxArch.bash) 
